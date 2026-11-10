@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Cloud Linux Deployment</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #14213d;
+            color: white;
+            padding: 25px 8%;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            color: #cbd5e1;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 65px 20px 45px;
+            background: white;
+        }
+
+        .hero h2 {
+            font-size: 36px;
+            margin: 0 0 12px;
+        }
+
+        .hero p {
+            color: #64748b;
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .status {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin: 35px 0 18px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .card {
+            background: white;
+            padding: 23px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #14213d;
+        }
+
+        .value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .completed {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .upcoming {
+            color: #b45309;
+            font-weight: bold;
+        }
+
+        .command {
+            background: #f1f5f9;
+            padding: 9px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            margin: 8px 0;
+            overflow-wrap: anywhere;
+        }
+
+        .journey-item {
+            padding: 14px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .journey-item:last-child {
+            border-bottom: none;
+        }
+
+        .note {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 18px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        footer {
+            background: #14213d;
+            color: #cbd5e1;
+            text-align: center;
+            padding: 25px;
+            margin-top: 50px;
+        }
+
+        /* MULTI-CLOUD ARCHITECTURE DIAGRAM */
+
+        .architecture {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .architecture-box {
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #cbd5e1;
+            background: #f8fafc;
+        }
+
+        .architecture-box p {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        .browser {
+            max-width: 350px;
+            margin: auto;
+            border-color: #64748b;
+        }
+
+        .architecture-arrow {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2563eb;
+            padding: 10px;
+        }
+
+        .architecture-clouds {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .aws {
+            border-color: #f59e0b;
+        }
+
+        .azure {
+            border-color: #2563eb;
+        }
+
+        .architecture-note {
+            text-align: center;
+            color: #64748b;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        /* APPLICATION STATUS CARD */
+
+        .application-card {
+            text-align: center;
+            padding: 35px 25px;
+            margin-top: 25px;
+        }
+
+        .application-card h2 {
+            font-size: 30px;
+            margin: 15px 0 10px;
+        }
+
+        .application-card p {
+            max-width: 700px;
+            margin: 10px auto;
+        }
+
+        .status-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        @media (max-width: 600px) {
+            .hero h2 {
+                font-size: 28px;
+            }
+
+            .architecture-clouds {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Multi-Cloud Linux Deployment</h1>
+    <p>A practical AWS and Microsoft Azure hands-on project</p>
+</header>
+
+<section class="hero">
+    <div class="status">✓ AWS Deployment Completed | Azure Deployment in Progress</div>
+
+    <h2>Building Across Clouds, One Step at a Time!</h2>
+
+    <p>
+        From provisioning Linux virtual machines to deploying websites,
+        we are exploring how cloud infrastructure, networking,
+        security and Linux administration work together across
+        Amazon Web Services and Microsoft Azure.
+    </p>
+</section>
+
+<main class="container">
+
+    <!-- PROJECT OBJECTIVE -->
+
+    <h2 class="section-title">Our Project Objective</h2>
+
+    <div class="card">
+        <h3>One Website. Two Cloud Platforms.</h3>
+
+        <p>
+            Our goal is to deploy the same custom website on two
+            different cloud platforms using Ubuntu Linux virtual machines.
+        </p>
+
+        <p>
+            We are following a practical, step-by-step approach:
+            provision cloud infrastructure, configure secure connectivity,
+            administer Linux, install a web server, deploy our website
+            and verify application accessibility.
+        </p>
+
+        <p>
+            This project helps us understand the similarities and
+            differences between AWS EC2 and Microsoft Azure Virtual Machines
+            through actual hands-on implementation.
+        </p>
+    </div>
+
+
+    <!-- MULTI-CLOUD ARCHITECTURE -->
+
+    <h2 class="section-title">Our Multi-Cloud Architecture</h2>
+
+    <div class="card">
+
+        <p>
+            We deploy the same custom website independently on two
+            cloud platforms. Visitors can access each deployment
+            through its own public endpoint.
+        </p>
+
+        <div class="architecture">
+
+            <div class="architecture-box browser">
+                <strong>🌐 User Browser</strong>
+                <p>HTTP Request</p>
+            </div>
+
+            <div class="architecture-arrow">↓</div>
+
+            <div class="architecture-clouds">
+
+                <div class="architecture-box aws">
+                    <strong>☁️ AWS Cloud</strong>
+                    <p>EC2 - Ubuntu Linux</p>
+                    <p>NGINX Web Server</p>
+                    <p>Custom HTML Website</p>
+                    <p class="completed">✓ Deployment Verified</p>
+                </div>
+
+                <div class="architecture-box azure">
+                    <strong>☁️ Microsoft Azure</strong>
+                    <p>Azure VM - Ubuntu Linux</p>
+                    <p>NGINX Web Server</p>
+                    <p>Same Custom HTML Website</p>
+                    <p class="upcoming">→ Public Verification Pending</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <p class="architecture-note">
+            Both deployments host the same website independently.
+            We can access each cloud deployment using its own public IP address.
+        </p>
+
+    </div>
+
+
+    <!-- APPLICATION STATUS -->
+
+    <section class="card application-card">
+
+        <div class="status status-progress">
+            ● AWS Deployment Complete | Azure Public Verification Pending
+        </div>
+
+        <h2>Powered by NGINX</h2>
+
+        <p>
+            Our custom multi-cloud project dashboard has been deployed
+            on both AWS and Azure Linux virtual machines.
+            NGINX is running on both servers, and local website
+            verification has been completed on both platforms.
+        </p>
+
+        <p>
+            <strong>Completed:</strong> AWS EC2 and Microsoft Azure VM deployments
+            (local verification).
+        </p>
+
+        <p>
+            <strong>Next milestone:</strong> Verify our custom website
+            through the Azure public IP address.
+        </p>
+
+    </section>
+
+
+    <!-- AWS INFRASTRUCTURE -->
+
+    <h2 class="section-title">AWS EC2 - Deployment Completed</h2>
+
+    <div class="grid">
+
+        <div class="card">
+            <h3>Cloud Platform</h3>
+            <div class="value">AWS EC2</div>
+            <p>Amazon Elastic Compute Cloud</p>
+        </div>
+
+        <div class="card">
+            <h3>Operating System</h3>
+            <div class="value">Ubuntu 26.04.1 LTS</div>
+            <p>Ubuntu Linux virtual machine</p>
+        </div>
+
+        <div class="card">
+            <h3>Instance Type</h3>
+            <div class="value">t3.micro</div>
+            <p>2 vCPUs · 1 GiB instance memory</p>
+        </div>
+
+        <div class="card">
+            <h3>Storage</h3>
+            <div class="value">8 GiB</div>
+            <p>gp3 EBS root volume</p>
+        </div>
+
+        <div class="card">
+            <h3>Instance Health</h3>
+            <div class="value completed">3/3 Checks Passed</div>
+            <p>EC2 instance running successfully</p>
+        </div>
+
+    </div>
+
+
+    <!-- AZURE INFRASTRUCTURE -->
+
+    <h2 class="section-title">Microsoft Azure - VM Deployment Completed</h2>
+
+    <div class="grid">
+
+        <div class="card">
+            <h3>Cloud Platform</h3>
+            <div class="value">Microsoft Azure</div>
+            <p>Azure Virtual Machine</p>
+        </div>
+
+        <div class="card">
+            <h3>Operating System</h3>
+            <div class="value">Ubuntu 24.04.5 LTS</div>
+            <p>Ubuntu Linux virtual machine</p>
+        </div>
+
+        <div class="card">
+            <h3>VM Size</h3>
+            <div class="value">Standard_B2ats_v2</div>
+            <p>1 vCPU · Approximately 887 MiB reported memory</p>
+        </div>
+
+        <div class="card">
+            <h3>Storage</h3>
+            <div class="value">Standard SSD</div>
+            <p>Azure managed OS disk</p>
+        </div>
+
+        <div class="card">
+            <h3>VM Deployment</h3>
+            <div class="value completed">✓ Completed</div>
+            <p>VM provisioned and SSH connectivity verified</p>
+        </div>
+
+    </div>
+
+
+    <!-- SECURITY -->
+
+    <h2 class="section-title">Security and Connectivity</h2>
+
+    <div class="card">
+
+        <div class="journey-item">
+            <strong>SSH - TCP Port 22</strong>
+            <p>
+                Restricted SSH access to our current public IPv4 address
+                using a /32 CIDR range on both cloud platforms.
+            </p>
+            <span class="completed">✓ Configured and SSH verified</span>
+        </div>
+
+        <div class="journey-item">
+            <strong>HTTP - TCP Port 80</strong>
+            <p>
+                Configured public HTTP access so visitors can reach
+                the web servers through a browser.
+            </p>
+            <span class="completed">✓ Configured on both platforms</span>
+        </div>
+
+        <div class="journey-item">
+            <strong>SSH Key Authentication</strong>
+            <p>
+                Established remote access to both Linux virtual machines
+                using SSH key-based authentication.
+            </p>
+            <span class="completed">✓ Verified on both platforms</span>
+        </div>
+
+    </div>
+
+
+    <!-- LINUX ADMINISTRATION -->
+
+    <h2 class="section-title">Linux Administration - What We Learned</h2>
+
+    <div class="card">
+
+        <div class="journey-item">
+            <strong>1. Identify the operating system</strong>
+            <div class="command">cat /etc/os-release</div>
+            <p>
+                AWS: Ubuntu 26.04.1 LTS.
+                Azure: Ubuntu 24.04.5 LTS.
+            </p>
+            <span class="completed">✓ Verified on both VMs</span>
+        </div>
+
+        <div class="journey-item">
+            <strong>2. Check the Linux kernel</strong>
+            <div class="command">uname -r</div>
+            <p>Verified the running Linux kernel.</p>
+            <span class="completed">✓ Verified on both VMs</span>
+        </div>
+
+        <div class="journey-item">
+            <strong>3. Inspect disk usage</strong>
+            <div class="command">df -h</div>
+            <p>Checked filesystem capacity and available storage.</p>
+            <span class="completed">✓ Verified on both VMs</span>
+        </div>
+
+        <div class="journey-item">
+            <strong>4. Inspect memory</strong>
+            <div class="command">free -h</div>
+            <p>
+                Checked total, used and available memory.
+                AWS reported approximately 908 MiB, while
+                Azure reported approximately 887 MiB.
+            </p>
+            <span class="completed">✓ Verified on both VMs</span>
+        </div>
+
+        <div class="journey-item">
+            <strong>5. Check CPU count</strong>
+            <div class="command">nproc</div>
+            <p>
+                AWS: 2 available processing units.
+                Azure: 1 available processing unit.
+            </p>
+            <span class="completed">✓ Verified on both VMs</span>
+        </div>
+
+    </div>
+
+
+    <!-- NGINX -->
+
+    <h2 class="section-title">NGINX - Web Server Deployment on Azure</h2>
+
+    <div class="card">
+
+        <div class="journey-item">
+            <strong>1. Refresh Ubuntu package information</strong>
+            <div class="command">sudo apt update</div>
+            <span class="completed">✓ Completed</span>
+            <p>
+                Refreshed the local package index before installing NGINX.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>2. Install NGINX</strong>
+            <div class="command">sudo apt install nginx -y</div>
+            <span class="completed">✓ Completed</span>
+            <p>Installed the NGINX web server on the Azure VM.</p>
+        </div>
+
+        <div class="journey-item">
+            <strong>3. Verify NGINX service</strong>
+            <div class="command">sudo systemctl status nginx --no-pager</div>
+            <span class="completed">✓ Active and running</span>
+            <p>Confirmed that the NGINX service is running.</p>
+        </div>
+
+        <div class="journey-item">
+            <strong>4. Test local HTTP response</strong>
+            <div class="command">curl -I http://localhost</div>
+            <span class="completed">✓ HTTP 200 OK</span>
+            <p>
+                Confirmed that NGINX was responding locally
+                with a successful HTTP response.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>5. Verify the default NGINX page</strong>
+            <div class="command">curl -s http://localhost | head</div>
+            <span class="completed">✓ Default NGINX page responded</span>
+            <p>
+                Confirmed that the default NGINX welcome page
+                was initially served by the web server.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>6. Deploy our custom website</strong>
+            <p>
+                Replaced the default NGINX page with our own
+                multi-cloud project dashboard.
+            </p>
+            <div class="command">/var/www/html/index.html</div>
+            <span class="completed">✓ Custom HTML deployed</span>
+        </div>
+
+        <div class="journey-item">
+            <strong>7. Verify our application locally</strong>
+            <div class="command">curl -s http://localhost | head -20</div>
+            <span class="completed">✓ Custom HTML response verified</span>
+            <p>
+                Confirmed that NGINX serves our custom HTML content
+                instead of the default welcome page.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>8. Verify public accessibility</strong>
+            <p>
+                Open the Azure VM public IPv4 address in a browser
+                and confirm that our custom website is accessible.
+            </p>
+            <span class="upcoming">→ Pending browser verification</span>
+        </div>
+
+    </div>
+
+
+    <!-- APPLICATION OVERVIEW -->
+
+    <h2 class="section-title">Our Application - Deployment Overview</h2>
+
+    <div class="card">
+
+        <h3>What Are We Building?</h3>
+
+        <p>
+            A custom HTML website hosted on Ubuntu Linux virtual machines
+            using the NGINX web server on AWS and Microsoft Azure.
+        </p>
+
+        <div class="journey-item">
+            <strong>Web Server</strong>
+            <p>NGINX installed and running on both cloud VMs.</p>
+            <span class="completed">✓ Ready</span>
+        </div>
+
+        <div class="journey-item">
+            <strong>Website Files</strong>
+            <p>
+                Our custom HTML dashboard is deployed inside
+                the NGINX web root directory on both VMs.
+            </p>
+            <span class="completed">✓ Deployed</span>
+        </div>
+
+        <div class="journey-item">
+            <strong>Local Application Verification</strong>
+            <p>
+                Confirmed that the custom website is served successfully
+                by NGINX from both Linux virtual machines.
+            </p>
+            <span class="completed">✓ Verified on both platforms</span>
+        </div>
+
+        <div class="journey-item">
+            <strong>Public Access</strong>
+            <p>
+                AWS public website access has been verified.
+                Azure public website verification is our next step.
+            </p>
+            <span class="upcoming">→ Azure verification pending</span>
+        </div>
+
+    </div>
+
+
+    <!-- PROJECT JOURNEY -->
+
+    <h2 class="section-title">Our Multi-Cloud Journey</h2>
+
+    <div class="card">
+
+        <div class="journey-item">
+            <strong>01. AWS EC2 Infrastructure</strong>
+            <span class="completed">✓ Completed</span>
+            <p>
+                Provisioned an Ubuntu Linux VM and established secure SSH access.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>02. AWS Linux Administration</strong>
+            <span class="completed">✓ Completed</span>
+            <p>
+                Inspected the operating system, kernel, CPU, memory and disk.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>03. AWS NGINX Installation</strong>
+            <span class="completed">✓ Completed</span>
+            <p>
+                Installed NGINX, verified its service and tested its response.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>04. AWS Custom Website Deployment</strong>
+            <span class="completed">✓ Completed</span>
+            <p>
+                Deployed our custom HTML website and verified
+                local and public accessibility.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>05. Microsoft Azure Linux VM</strong>
+            <span class="completed">✓ Completed</span>
+            <p>
+                Provisioned an Ubuntu virtual machine on Microsoft Azure
+                and established secure SSH access.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>06. Azure Linux Administration and NGINX Installation</strong>
+            <span class="completed">✓ Completed</span>
+            <p>
+                Updated package information, inspected Linux resources,
+                installed NGINX and verified the running service.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>07. Azure Custom Website Deployment</strong>
+            <span class="completed">✓ Completed</span>
+            <p>
+                Deployed the same custom HTML website on the Azure VM
+                and verified the local HTTP response.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>08. Azure Public Website Verification</strong>
+            <span class="upcoming">→ In progress</span>
+            <p>
+                Verify that our custom website is accessible
+                through the Azure public IP address.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>09. Multi-Cloud Comparison</strong>
+            <span class="upcoming">→ Upcoming</span>
+            <p>
+                Compare AWS EC2 and Azure VM networking, security,
+                infrastructure and application deployment.
+            </p>
+        </div>
+
+        <div class="journey-item">
+            <strong>10. Resource Cleanup and Cost Review</strong>
+            <span class="upcoming">→ Upcoming</span>
+            <p>
+                Remove lab resources when no longer required
+                and review cloud usage and costs.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- PROJECT TAKEAWAY -->
+
+    <div class="note">
+
+        <strong>What Are We Demonstrating?</strong>
+
+        <p>
+            This project demonstrates the journey of deploying
+            the same website across two cloud platforms:
+        </p>
+
+        <p>
+            Cloud provisioning → Secure connectivity → Linux administration
+            → Web server installation → Website deployment
+            → Application verification → Resource cleanup.
+        </p>
+
+        <p>
+            More importantly, we are gaining practical experience
+            with two major cloud platforms and understanding how
+            similar workloads can be deployed across different environments.
+        </p>
+
+    </div>
+
+</main>
+
+<footer>
+    <strong>Learn by Building. Understand by Doing.</strong>
+    <p>Multi-Cloud Linux Deployment | AWS + Microsoft Azure Hands-on Project</p>
+</footer>
+
+</body>
+</html>
