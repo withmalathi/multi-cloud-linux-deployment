@@ -752,7 +752,7 @@ enabled
 
 ![Verify NGINX is running](screenshots/az-screenshots/verify-nginx-is-running.png)
 
-## Step 2.8 – Test NGINX Locally
+## Step 2.8 – Test NGINX Locally and on web-browser
 
 Run:
 
@@ -771,6 +771,18 @@ HTTP/1.1 200 OK
 At this stage, the default NGINX welcome page should be available.
 
 ![Verify local web server](screenshots/az-screenshots/verify-the-local-web-server.png)
+
+Run:
+
+```bash
+http://<AZURE_PUBLIC_IP>/
+```
+
+**Expected result:**
+
+The HTTP request should return:
+
+![Test the Azure public endpoint](screenshots/az-screenshots/test-the-azure-public-endpoint.png)
 
 ## Step 2.9 – Identify the NGINX Web Root and Back Up the Default Page
 
@@ -908,7 +920,7 @@ The initial Azure dashboard should load. It should show that AWS deployment is c
 
 ![Verify the deployed file](screenshots/az-screenshots/verify-the-file-before-opening-it-in-the-browser.png)
 
-![Test the Azure public endpoint](screenshots/az-screenshots/test-the-azure-public-endpoint.png)
+![Test the Azure public endpoint](screenshots/az-screenshots/azure-in-progress-public-website.png)
 
 ## Step 2.12 – Update the Azure Website to Version 2
 
