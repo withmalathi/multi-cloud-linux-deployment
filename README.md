@@ -253,23 +253,14 @@ The EC2 instance should reach the **Running** state, and its instance status che
 Our lab configuration:
 
 | Setting | Value |
-
 |---|---|
-
 | Instance name | `multicloud-aws-vm` |
-
 | Region | US West (Oregon) – `us-west-2` |
-
 | Operating system | Ubuntu 26.04.1 LTS |
-
 | Instance type | `t3.micro` |
-
 | vCPU | 2 |
-
 | Configured memory | 1 GiB |
-
 | Root storage | 8 GiB gp3 |
-
 | SSH key pair | `multicloud-aws-key` |
 
 ## Step 1.2 – Connect to the EC2 Instance Using SSH
