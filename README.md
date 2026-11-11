@@ -734,15 +734,11 @@ A resource group provides a logical container for related resources, making them
 
 7. Add the following tags:
 
-| Tag | Value |
-
-|---|---|
-
-| Project | `MultiCloud-Linux-Deployment` |
-
-| Environment | `Learning` |
-
-| ManagedBy | `Manual` |
+| Tag       | Value                     |
+|-----------|---------------------------|
+| Project   | MultiCloud-Linux-Deployment |
+| Environment | Learning                |
+| ManagedBy | Manual                    |
 
 8. Select **Review + create**, then **Create**.
 
@@ -824,29 +820,18 @@ Azure should deploy the virtual machine successfully.
 
 Our lab configuration:
 
-| Setting | Value |
-
-|---|---|
-
-| Resource group | `multicloud-linux-rg` |
-
-| VM name | `multicloud-azure-vm` |
-
-| Region | West US 2 |
-
-| Operating system | Ubuntu 24.04.5 LTS |
-
-| VM size | `Standard_B2ats_v2` |
-
-| vCPU | 1 |
-
-| Reported memory | Approximately 887 MiB |
-
-| OS disk | Standard SSD LRS |
-
-| Username | `azureuser` |
-
-| SSH authentication | SSH key pair |
+| Setting              | Value                  |
+|----------------------|------------------------|
+| Resource group       | `multicloud-linux-rg`  |
+| VM name              | `multicloud-azure-vm`  |
+| Region               | West US 2              |
+| Operating system     | Ubuntu 24.04.5 LTS      |
+| VM size              | `Standard_B2ats_v2`    |
+| vCPU                 | 1                      |
+| Reported memory      | Approximately 887 MiB  |
+| OS disk              | Standard SSD LRS       |
+| Username             | `azureuser`            |
+| SSH authentication   | SSH key pair           |
 
 **Screenshots**
 
@@ -897,11 +882,8 @@ Open the VM's **Networking** section and navigate to its Network Security Group 
 Configure or verify these rules:
 
 | Rule | Priority | Protocol | Port | Source | Action |
-
-|---|---:|---|---:|---|---|
-
+|------|----------|----------|------|--------|--------|
 | HTTP | 300 | TCP | 80 | Any | Allow |
-
 | SSH | 320 | TCP | 22 | Your public IP (`/32`) | Allow |
 
 **Important security learning:**
@@ -1397,25 +1379,15 @@ After completing both deployments, we compare the infrastructure, network securi
 ## Step 3.1 – Compare the Virtual Machine Configurations
 
 | Configuration | AWS | Microsoft Azure |
-
-|---|---|---|
-
+|---------------|-----|-----------------|
 | Cloud service | Amazon EC2 | Azure Virtual Machine |
-
 | Region | US West (Oregon) | West US 2 |
-
 | VM name | `multicloud-aws-vm` | `multicloud-azure-vm` |
-
 | Operating system | Ubuntu 26.04.1 LTS | Ubuntu 24.04.5 LTS |
-
 | VM size | `t3.micro` | `Standard_B2ats_v2` |
-
 | vCPU | 2 | 1 |
-
 | Memory | 1 GiB configured | Approximately 887 MiB reported |
-
 | Storage | 8 GiB gp3 EBS | Standard SSD |
-
 | Web server | NGINX | NGINX |
 
 ![AWS and Azure VM configuration](comparison-aws-azure/aws-azure-vm-configuration.png)
@@ -1423,15 +1395,10 @@ After completing both deployments, we compare the infrastructure, network securi
 ## Step 3.2 – Compare Network Security
 
 | Configuration | AWS | Microsoft Azure |
-
 |---|---|---|
-
-| Network security service | Security Group | Network Security Group |
-
+| Network security service | Security Group | Network Security Group (NSG) |
 | SSH | TCP 22, restricted to client IP `/32` | TCP 22, restricted to client IP `/32` |
-
 | HTTP | TCP 80, public | TCP 80, public |
-
 | Remote access | SSH key authentication | SSH key authentication |
 
 ![AWS and Azure network security comparison](comparison-aws-azure/aws-azure-network-security.png)
@@ -1479,27 +1446,16 @@ The same custom HTML dashboard was deployed on both Ubuntu virtual machines usin
 ## Step 3.5 – Common Verification Commands
 
 | Command | Purpose |
-
 |---|---|
-
 | `whoami` | Verify the logged-in user |
-
 | `hostname` | Check the VM hostname |
-
 | `cat /etc/os-release` | Identify the operating system |
-
 | `uname -r` | Check the running kernel |
-
 | `nproc` | Check available CPU cores |
-
 | `free -h` | Inspect memory usage |
-
 | `df -h` | Inspect disk usage |
-
 | `sudo systemctl status nginx --no-pager` | Check NGINX service status |
-
 | `curl -I http://localhost` | Verify the local HTTP response |
-
 | `curl -s http://localhost` | Inspect the served website content |
 
 **Final verification checklist:**
@@ -1540,91 +1496,199 @@ The same custom HTML dashboard was deployed on both Ubuntu virtual machines usin
 
 ---
 
----
 
 # Phase 4 – Cleanup and Cost Review
 
-After completing the deployment and comparison, we clean up the cloud resources created for this learning project. This helps avoid unnecessary ongoing charges.
+After completing the AWS and Azure deployments, website verification and multi-cloud comparison, we clean up the cloud resources created for this project.
 
-Cloud resources may continue to incur charges even when we are no longer using the virtual machines. Stopping a VM does not necessarily remove charges for associated disks, public IP addresses or other retained resources. Before cleanup, make sure that all required screenshots, website files and project documentation are saved in GitHub.
+This is important because cloud resources may continue to incur charges even when we are no longer actively using them. Stopping a virtual machine does not necessarily remove charges for associated disks, public IP addresses or other retained resources.
 
-> **Recording and evidence note:** The cleanup walkthrough and cost-review steps are documented for the recording. The actual AWS and Azure resource deletion has not been represented as completed here. Perform the deletion, verify the results in both portals, and add the corresponding screenshots before marking cleanup itself complete.
+Before starting cleanup, make sure that all required project files, website pages, screenshots and documentation are saved in the local project folder or GitHub repository.
 
 ## Step 4.1 – Clean Up AWS Resources
 
-1. Sign in to the AWS Management Console.
-2. Open **EC2** and select **Instances**.
-3. Select `multicloud-aws-vm`.
-4. Choose **Instance state** → **Terminate instance**.
-5. Confirm termination.
-6. Open **Security Groups** and review the security group created for this lab.
-7. Delete the lab security group if it is no longer in use and AWS allows it to be deleted.
-8. Open **Volumes** and review the EBS volume associated with the terminated instance. Confirm whether it was deleted automatically; delete any remaining lab volume only after confirming it is not needed.
-9. Open **Elastic IPs** and check whether any address was allocated for this lab. Release it if it is no longer required.
+We first clean up the AWS resources created for our project.
 
-**Important:** Do not delete shared/default VPC networking resources or security groups that are used by other workloads. Only remove resources created specifically for this project and confirmed to be unused.
+### 1. Terminate the EC2 Instance
+
+1. Sign in to the AWS Management Console.
+2. Open the **EC2** service.
+3. Select **Instances** from the left navigation.
+4. Select the instance named `multicloud-aws-vm`.
+5. Choose **Instance state → Terminate instance**.
+6. Review the confirmation message and confirm termination.
 
 **Expected result:**
 
-The lab EC2 instance should be terminated, and any project-specific billable resources that are no longer required should be removed.
+The EC2 instance enters the termination process. After AWS completes the operation, its instance state should show `Terminated`.
 
-**Cleanup evidence to add during recording:**
+**Screenshots:**
 
-- Screenshot showing the EC2 instance in the terminated state.
-- Screenshot showing the review of the project security group.
-- Screenshot showing the review of EBS volumes and Elastic IPs, where applicable.
+![Terminate the EC2 instance](screenshots/clean-up/1-terminate-the-ec2-instance.png)
+
+![Confirm EC2 instance termination](screenshots/clean-up/2-confirm-termination.png)
+
+![Verify the instance is terminated](screenshots/clean-up/3-the-instance-state-should-eventually-show-terminated.png)
+
+### 2. Delete the AWS Key Pair
+
+After terminating the instance, we remove the project-specific key pair from AWS.
+
+1. In the EC2 console, open **Network & Security → Key Pairs**.
+2. Identify the key pair named `multicloud-aws-key`.
+3. Select the key pair.
+4. Choose **Actions → Delete**.
+5. Confirm the deletion.
+
+**Why are we doing this?**
+
+The key pair was created specifically for this project. Once the EC2 instance has been terminated and the key pair is no longer required for another instance, we can remove its AWS console entry.
+
+**Important:** Deleting the key pair from AWS does not delete the downloaded private PEM file from your local computer. Keep or securely dispose of that file according to your needs.
+
+**Screenshots:**
+
+![Delete the AWS key pair](screenshots/clean-up/4-delete-the-key-pair.png)
+
+![Confirm key pair deletion](screenshots/clean-up/5-confirm-delete-in-box.png)
+
+![Verify successful key pair deletion](screenshots/clean-up/6-successfully-deleted-key-pair.png)
+
+### 3. Delete the Project Security Group
+
+Next, we remove the security group created for the AWS deployment.
+
+1. In the EC2 console, open **Network & Security → Security Groups**.
+2. Identify the security group created for this project.
+3. Select the security group.
+4. Review whether it is associated with any other resources.
+5. If it is no longer in use, choose **Actions → Delete security group**.
+6. Confirm deletion.
+
+**Why are we doing this?**
+
+The security group contains the inbound rules we configured for SSH and HTTP access to our EC2 instance. Since the project instance has been terminated, the project-specific security group is no longer needed.
+
+**Important:** Do not delete default security groups or security groups used by other workloads.
+
+**Expected result:**
+
+The project-specific security group should be successfully deleted.
+
+**Screenshots:**
+
+![Identify and delete the project security group](screenshots/clean-up/7-identify-and-delete-the-security-group-created-for-this-project.png)
+
+![Delete the security group](screenshots/clean-up/8-delete-security-groups-ec2.png)
+
+![Verify successful security group deletion](screenshots/clean-up/9-successfully-deleted-security-group.png)
+
+### 4. Review Remaining AWS Resources
+
+After the above cleanup steps, review the following EC2 resources:
+
+- **Volumes:** Check whether the EBS volume associated with the terminated instance was deleted automatically. Remove any remaining project-specific volume only after confirming it is no longer required.
+- **Elastic IPs:** Check whether an Elastic IP was allocated for this project. Release it if one exists and is no longer required.
+- **Snapshots:** Review any project-specific snapshots, if created.
+
+Do not remove shared or default VPC networking resources.
+
+**Expected result:**
+
+The project EC2 instance is terminated, and the project-specific key pair and security group have been removed. Any remaining project-specific resources are reviewed before deletion.
 
 ## Step 4.2 – Clean Up Microsoft Azure Resources
 
-The Azure resources for this project were grouped under:
+Next, we clean up the Azure resources created for this project.
+
+All our Azure resources were organized under the resource group:
 
 `multicloud-linux-rg`
 
-To remove the project resources together:
+Instead of deleting each resource individually, we can remove the project resource group after verifying its contents.
+
+### 1. Open the Azure Resource Group
 
 1. Sign in to the Azure Portal.
-2. Open **Resource groups**.
-3. Select `multicloud-linux-rg`.
-4. Review the resources listed in the resource group.
-5. Confirm that the group contains only resources created for this project and that nothing needs to be retained.
-6. Select **Delete resource group**.
-7. Enter the resource group name when prompted.
-8. Confirm deletion.
+2. Search for **Resource groups**.
+3. Open the resource group named `multicloud-linux-rg`.
+4. Review the resources listed inside it.
 
-Deleting the resource group removes the resources contained in it, including the VM and its associated resources, subject to Azure's deletion process.
+Confirm that the resource group contains only resources created for this project and that nothing needs to be retained.
+
+**Screenshot:**
+
+![Open the Azure project resource group](screenshots/clean-up/10-open-the-resource-group.png)
+
+### 2. Delete the Azure Resource Group
+
+1. Select **Delete resource group**.
+2. Review the deletion details.
+3. Enter `multicloud-linux-rg` in the confirmation field when prompted.
+4. Confirm the deletion.
+
+**Why are we doing this?**
+
+A resource group is a logical container for related Azure resources. Deleting the project resource group initiates deletion of the resources contained within it, including the virtual machine and its associated resources.
+
+**Screenshots:**
+
+![Delete the Azure resource group](screenshots/clean-up/11-delete-the-resource-group.png)
+
+![Confirm resource group deletion](screenshots/clean-up/12-confirm-the-deletion.png)
+
+![Confirm the deletion again](screenshots/clean-up/12-confirm-the-deletion-again.png)
+
+### 3. Verify Azure Deletion
+
+After confirming deletion, wait for Azure to complete the operation.
+
+Return to **Resource groups** and refresh the list.
 
 **Expected result:**
 
-The resource group `multicloud-linux-rg` should no longer appear in the active resource group list after deletion completes.
+The resource group `multicloud-linux-rg` should no longer appear in the active resource group list once deletion has completed.
 
-**Cleanup evidence to add during recording:**
+**Screenshot:**
 
-- Screenshot showing the resources inside `multicloud-linux-rg` before deletion.
-- Screenshot showing the deletion confirmation or deletion completion.
-- Screenshot showing that the resource group is no longer listed.
+![Verify Azure resource group deletion](screenshots/clean-up/13-deletion-is-confirmed.png)
 
 ## Step 4.3 – Review Cloud Costs
 
-After cleanup:
+After cleaning up both cloud environments, review the billing and cost-management pages.
 
-- Review the AWS billing and cost pages for any remaining resources or charges.
-- Review Azure Cost Management for any remaining resources or charges.
-- Remember that stopping a VM does not necessarily remove charges for attached disks, public IP addresses, or other retained resources.
-- Billing data may take time to reflect resource deletion.
+| Cloud platform | Where to review |
+|---|---|
+| AWS | Billing and Cost Management |
+| Microsoft Azure | Cost Management |
 
-**Expected result:**
+Check for any remaining project-related resources or charges.
 
-We should confirm that the resources created for this lab have been removed and review both cloud platforms for any remaining project-related resources or charges.
+Keep in mind that billing information may take time to reflect resource deletion. Deleting the resources does not necessarily mean that previously incurred charges disappear.
+
+## Cleanup Verification Checklist
+
+| Cleanup activity | Status |
+|---|---|
+| AWS EC2 instance terminated | Completed |
+| AWS key pair deleted from AWS | Completed |
+| AWS project security group deleted | Completed |
+| AWS EBS volumes reviewed | Review required |
+| AWS Elastic IPs reviewed | Review required |
+| Azure resource group deletion confirmed | Completed |
+| AWS billing reviewed | Review required |
+| Azure Cost Management reviewed | Review required |
 
 ## Cleanup Milestone
+The AWS instance, project key pair and project security group have been cleaned up, and Azure resource group deletion has been confirmed. Remaining AWS resource checks and both cloud cost reviews should be completed before declaring the entire cleanup process finished.
 
 - [x] AWS EC2 cleanup instructions documented.
 - [x] AWS security group, EBS volume and Elastic IP review documented.
 - [x] Azure resource group cleanup instructions documented.
 - [x] AWS and Azure cost-review steps documented.
-- [ ] Actual AWS resource deletion performed and verified.
-- [ ] Actual Azure resource group deletion performed and verified.
-- [ ] Cleanup evidence screenshots captured and added.
+- [x]  Actual AWS resource deletion performed and verified.
+- [x]  Actual Azure resource group deletion performed and verified.
+- [x]  Cleanup evidence screenshots captured and added.
 
 ---
 
