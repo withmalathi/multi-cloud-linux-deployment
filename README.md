@@ -1664,8 +1664,6 @@ Keep in mind that billing information may take time to reflect resource deletion
 | AWS EC2 instance terminated | Completed |
 | AWS key pair deleted from AWS | Completed |
 | AWS project security group deleted | Completed |
-| AWS EBS volumes reviewed | Review required |
-| AWS Elastic IPs reviewed | Review required |
 | Azure resource group deletion confirmed | Completed |
 | AWS billing reviewed | Review required |
 | Azure Cost Management reviewed | Review required |
@@ -1680,6 +1678,12 @@ The AWS instance, project key pair and project security group have been cleaned 
 - [x]  Actual AWS resource deletion performed and verified.
 - [x]  Actual Azure resource group deletion performed and verified.
 - [x]  Cleanup evidence screenshots captured and added.
+
+We have completed the cleanup steps demonstrated in this project. However, terminating an EC2 instance does not automatically mean every associated AWS resource has been deleted.
+
+Before considering the environment fully cleaned up, we should separately review the EBS volumes, Elastic IP addresses, and billing dashboard.
+
+We are not claiming those checks have already been completed as part of this demonstration. They are additional verification steps to perform in your own AWS account.
 
 ---
 
