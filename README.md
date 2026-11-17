@@ -89,16 +89,20 @@ README.md
 
 ### Local Terminal Setup for This Project
 
-We use Windows as the local machine, with WSL Ubuntu and Git Bash for different tasks. Keep the terminal choice consistent with the commands shown in each phase.
+We use Windows as our local machine, with WSL Ubuntu and Git Bash for different tasks. Keep the terminal choice consistent with the commands shown in each phase.
 
 | Activity | Terminal | Key path when stored under `D:\pem` |
 |---|---|---|
 | AWS SSH connection | WSL Ubuntu | `/mnt/d/pem/multicloud-aws-key.pem` |
-| AWS website file transfer (`scp`) | WSL Ubuntu | `/mnt/d/pem/multicloud-aws-key.pem` |
+| AWS website deployment | WSL Ubuntu | Open the local HTML file, copy its contents and paste them into the remote VM |
 | Azure SSH connection | Git Bash | `/d/pem/multicloud-azure-vm_key.pem` (copied into `~/.ssh/`) |
-| Azure website file transfer (`scp`) | WSL Ubuntu | `/mnt/d/pem/multicloud-azure-vm_key.pem` |
+| Azure website deployment | Git Bash | Open the local HTML file, copy its contents and paste them into the remote VM |
 
-WSL and Git Bash represent the Windows D: drive differently. Do not paste a WSL path into Git Bash or a Git Bash path into WSL without adapting it. Run `scp` from the local machine, not from inside the remote SSH session. Use `exit` to leave the remote session before running a local file-transfer command.
+WSL and Git Bash represent the Windows D: drive differently. Do not paste a WSL path into Git Bash or a Git Bash path into WSL without adapting it.
+
+For website deployment, we use SSH to connect to the remote VM and the `sudo tee` command to write the copied HTML content into the NGINX web root. We do not use SCP in this project.
+
+**Important:** Open the required HTML file on your local computer and copy its complete contents before connecting or while keeping the local file accessible. When using the `sudo tee` command, paste the complete HTML content and finish by entering `EOF` on a new line.
 
 ### Network Preparation
 
@@ -496,61 +500,42 @@ The dashboard communicates the progress of our deployment and gives us a visible
 Our website files are maintained in:
 
 ```text
-
 website-pages-aws-azure/
-
 ```
 
 For the initial AWS deployment, we use:
 
 ```text
-
 aws-website-version-1.html
-
 ```
 
-For a fresh reproduction from this GitHub repository, open a second WSL terminal and navigate to the project:
+**How do we do it?**
+
+1. Open the local project folder.
+2. Navigate to `website-pages-aws-azure/`.
+3. Open `aws-website-version-1.html` in a text editor.
+4. Copy the complete HTML content.
+
+Connect to the EC2 instance using the WSL Ubuntu terminal:
 
 ```bash
-
-cd ~/multi-cloud-linux-deployment
-
-```
-
-Copy Version 1 to the EC2 instance:
-
-```bash
-
-scp -i /mnt/d/pem/multicloud-aws-key.pem \\
-
-website-pages-aws-azure/aws-website-version-1.html \\
-
-ubuntu@<AWS_PUBLIC_IP>:/tmp/index.html
-
-```
-
-Connect to the EC2 instance if necessary:
-
-```bash
-
 ssh -i /mnt/d/pem/multicloud-aws-key.pem ubuntu@<AWS_PUBLIC_IP>
-
 ```
 
-Install the HTML file in the NGINX web root:
+After connecting, run:
 
 ```bash
-
-sudo install -o www-data -g www-data -m 644 /tmp/index.html /var/www/html/index.html
-
+sudo tee /var/www/html/index.html > /dev/null <<'EOF'
 ```
 
-Verify the file:
+Paste the complete HTML content copied from `aws-website-version-1.html`.
+
+After pasting the content, type `EOF` on a new line and press Enter.
+
+**Verify the deployed file:**
 
 ```bash
-
 sudo ls -lh /var/www/html/index.html
-
 ```
 
 **Expected result:**
@@ -559,9 +544,12 @@ The custom `index.html` file should exist inside `/var/www/html/`.
 
 Our initial AWS dashboard shows that NGINX is running and website deployment is in progress.
 
+**Screenshots**
+
 ![Create the initial custom website](screenshots/aws-screenshots/11-5-1-create-our-custom-website.png)
 
 ![Continue creating the custom website](screenshots/aws-screenshots/11-5-2-create-our-custom-website.png)
+
 
 ## Step 1.8 – Verify the Initial AWS Website
 
@@ -614,61 +602,42 @@ After verifying the initial website, we update the dashboard to reflect the comp
 The updated file is:
 
 ```text
-
 aws-website-version-2.html
-
 ```
 
-From the local WSL terminal, navigate to the repository:
+**How do we do it?**
+
+1. Open the local project folder.
+2. Navigate to `website-pages-aws-azure/`.
+3. Open `aws-website-version-2.html` in a text editor.
+4. Copy the complete HTML content.
+
+Connect to the EC2 instance using the WSL Ubuntu terminal if you are not already connected:
 
 ```bash
-
-cd ~/multi-cloud-linux-deployment
-
-```
-
-Copy Version 2 to the EC2 instance:
-
-```bash
-
-scp -i /mnt/d/pem/multicloud-aws-key.pem \\
-
-website-pages-aws-azure/aws-website-version-2.html \\
-
-ubuntu@<AWS_PUBLIC_IP>:/tmp/index.html
-
-```
-
-Connect to the EC2 instance if necessary:
-
-```bash
-
 ssh -i /mnt/d/pem/multicloud-aws-key.pem ubuntu@<AWS_PUBLIC_IP>
-
 ```
 
-Replace the existing website:
+Run the following command:
 
 ```bash
-
-sudo install -o www-data -g www-data -m 644 /tmp/index.html /var/www/html/index.html
-
+sudo tee /var/www/html/index.html > /dev/null <<'EOF'
 ```
 
-Verify the updated page:
+Paste the complete HTML content copied from `aws-website-version-2.html`.
+
+Type `EOF` on a new line and press Enter to finish updating the file.
+
+Verify the updated page locally:
 
 ```bash
-
 curl -s http://localhost | head -20
-
 ```
 
 Open the public endpoint again:
 
 ```text
-
 http://<AWS_PUBLIC_IP>/
-
 ```
 
 **Expected result:**
@@ -678,6 +647,8 @@ The AWS dashboard now shows:
 **NGINX Running | Website Deployment Completed**
 
 It also identifies Azure as the next deployment milestone.
+
+**Screenshots**
 
 ![Replace the HTML file](screenshots/aws-screenshots/12-1-replace-the-entire-html-file-at-once.png)
 
@@ -856,7 +827,6 @@ Our lab configuration:
 
 ![Azure VM visible in the portal](screenshots/az-screenshots/multicloud-azure-vm-is-visible-in-the-vm.png)
 
-![Azure VM visible in portal](screenshots/az-screenshots/multicloud-azure-vm-is-visible-in-the-vm.png)
 
 ## Step 2.3 – Configure Azure Network Security Group Rules
 
@@ -1194,53 +1164,36 @@ At this stage, AWS deployment is completed, while Azure public verification is s
 The initial Azure file is:
 
 ```text
-
 azure-website-version-1.html
-
 ```
 
-For a fresh reproduction from the repository, open a local WSL terminal:
+**How do we do it?**
+
+1. Open the local project folder.
+2. Navigate to `website-pages-aws-azure/`.
+3. Open `azure-website-version-1.html` in a text editor.
+4. Copy the complete HTML content.
+
+Connect to the Azure VM using Git Bash:
 
 ```bash
-
-cd ~/multi-cloud-linux-deployment
-
+ssh -i ~/.ssh/multicloud-azure-vm_key.pem azureuser@<AZURE_PUBLIC_IP>
 ```
 
-Copy Version 1 to the Azure VM:
+After connecting, run:
 
 ```bash
-
-scp -i /mnt/d/pem/multicloud-azure-vm_key.pem \\
-
-website-pages-aws-azure/azure-website-version-1.html \\
-
-azureuser@<AZURE_PUBLIC_IP>:/tmp/index.html
-
+sudo tee /var/www/html/index.html > /dev/null <<'EOF'
 ```
 
-Connect to the Azure VM if necessary:
+Paste the complete HTML content copied from `azure-website-version-1.html`.
 
-```bash
-
-ssh -i /mnt/d/pem/multicloud-azure-vm_key.pem azureuser@<AZURE_PUBLIC_IP>
-
-```
-
-Install the HTML file in the NGINX web root:
-
-```bash
-
-sudo install -o www-data -g www-data -m 644 /tmp/index.html /var/www/html/index.html
-
-```
+Type `EOF` on a new line and press Enter to finish writing the file.
 
 Verify the file:
 
 ```bash
-
 sudo ls -lh /var/www/html/index.html
-
 ```
 
 **Expected result:**
@@ -1283,7 +1236,7 @@ The initial Azure dashboard should load. It should show that AWS deployment is c
 
 ![Verify the deployed file](screenshots/az-screenshots/verify-the-file-before-opening-it-in-the-browser.png)
 
-**Recording screenshot cue:** Capture the initial Azure Version 1 public website in the browser during the recording and add its verified filename here if that screenshot is not already present in the repository.
+
 
 ## Step 2.12 – Update the Azure Website to Version 2
 
@@ -1292,61 +1245,42 @@ After verifying the initial Azure website through its public endpoint, we update
 The updated file is:
 
 ```text
-
 azure-website-version-2.html
-
 ```
 
-From the local WSL terminal:
+**How do we do it?**
+
+1. Open the local project folder.
+2. Navigate to `website-pages-aws-azure/`.
+3. Open `azure-website-version-2.html` in a text editor.
+4. Copy the complete HTML content.
+
+Connect to the Azure VM using Git Bash if you are not already connected:
 
 ```bash
-
-cd ~/multi-cloud-linux-deployment
-
+ssh -i ~/.ssh/multicloud-azure-vm_key.pem azureuser@<AZURE_PUBLIC_IP>
 ```
 
-Copy Version 2 to the Azure VM:
+Run the following command:
 
 ```bash
-
-scp -i /mnt/d/pem/multicloud-azure-vm_key.pem \\
-
-website-pages-aws-azure/azure-website-version-2.html \\
-
-azureuser@<AZURE_PUBLIC_IP>:/tmp/index.html
-
+sudo tee /var/www/html/index.html > /dev/null <<'EOF'
 ```
 
-Connect to the Azure VM if necessary:
+Paste the complete HTML content copied from `azure-website-version-2.html`.
 
-```bash
-
-ssh -i /mnt/d/pem/multicloud-azure-vm_key.pem azureuser@<AZURE_PUBLIC_IP>
-
-```
-
-Replace the existing website:
-
-```bash
-
-sudo install -o www-data -g www-data -m 644 /tmp/index.html /var/www/html/index.html
-
-```
+Type `EOF` on a new line and press Enter to finish updating the file.
 
 Verify the updated page locally:
 
 ```bash
-
 curl -s http://localhost | head -20
-
 ```
 
 Open the public endpoint again:
 
 ```text
-
 http://<AZURE_PUBLIC_IP>/
-
 ```
 
 **Expected result:**
@@ -1700,9 +1634,10 @@ We are not claiming those checks have already been completed as part of this dem
 | 07 | Azure custom website deployment | Completed |
 | 08 | Azure public website verification | Completed |
 | 09 | Multi-cloud comparison | Completed |
-| 10 | Resource cleanup and cost review | Pending – perform and verify during recording |
+| 10 | Resource deletion | Completed |
+| 11 | Remaining resource checks and cloud cost review | Review required |
 
-Update the final milestone after completing and verifying resource cleanup.
+The AWS EC2 instance, project-specific key pair and security group were deleted. Azure resource group deletion was also confirmed. Remaining AWS resource checks and AWS and Azure billing reviews are separate verification activities and should not be marked completed until they have actually been performed.
 
 # 8. Repository Structure
 
@@ -1717,7 +1652,8 @@ multi-cloud-linux-deployment/
 │   └── aws-azure-vm-configuration.png
 ├── screenshots/
 │   ├── aws-screenshots/
-│   └── az-screenshots/
+│   ├── az-screenshots/
+│   └── clean-up/
 └── website-pages-aws-azure/
     ├── aws-website-version-1.html
     ├── aws-website-version-2.html
